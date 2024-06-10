@@ -34,3 +34,16 @@ Stop the application:
 ./vendor/bin/sail down
 ```
 
+The app locally works at `http://localhost` and exposes the following endpoints:
+
+- `POST api/transaction`: Create a new transaction and stores it in the database.
+  - Schema:
+
+    ```json
+    {
+        "amount": 25.0,
+        "currency": "EUR",
+        "description": "Some payment",
+        "userId": "1"
+    }
+    ```
