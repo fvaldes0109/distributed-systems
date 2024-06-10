@@ -14,14 +14,23 @@
 ./setup.sh
 ```
 
-Afterwards, to stop the application, run the following command:
+- Run the migrations to set up the database:
+
+```bash
+./vendor/bin/sail artisan migrate
+```
+
+## How to use
+
+Run the application:
+
+```bash
+./vendor/bin/sail up -d
+```
+
+Stop the application:
 
 ```bash
 ./vendor/bin/sail down
 ```
 
-And to start it again, run:
-
-```bash
-./vendor/bin/sail up
-```
