@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'cloudcomputing' => [
+        'host' => env('CLOUD_COMPUTING_HOST', 'cloudcomputing'),
+        'port' => env('CLOUD_COMPUTING_PORT', 8080),
+    ],
 ];

@@ -24,6 +24,7 @@ services:
         depends_on:
             - mysql
             - redis
+            - cloudcomputing
     mysql:
         image: 'mysql/mysql-server:8.0'
         ports:
@@ -63,6 +64,12 @@ services:
                 - ping
             retries: 3
             timeout: 5s
+    cloudcomputing:
+        image: 'igorsakhankov/harbour-cloudcomputing'
+        ports:
+          - '8181:8080'
+        networks:
+            - sail
 networks:
     sail:
         driver: bridge
