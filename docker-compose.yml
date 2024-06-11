@@ -4,7 +4,10 @@ services:
             context: ./loadbalancer
             dockerfile: 'Dockerfile'
         ports:
-            - '8080:8080'
+            - '${LOAD_BALANCER_PORT:-9000}:${LOAD_BALANCER_PORT:-9000}'
+        environment:
+            BACKEND_SERVICES_URLS: ${BACKEND_SERVICES_URLS}
+            LOAD_BALANCER_PORT: ${LOAD_BALANCER_PORT}
         networks:
             - sail
     laravel.test:
