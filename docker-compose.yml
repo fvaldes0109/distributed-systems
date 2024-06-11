@@ -24,7 +24,6 @@ services:
         depends_on:
             - mysql
             - redis
-            - cloudcomputing
     mysql:
         image: 'mysql/mysql-server:8.0'
         ports:
