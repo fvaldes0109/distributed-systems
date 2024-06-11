@@ -19,6 +19,10 @@ class TransactionController extends Controller
 
         $transaction = TransactionService::createTransaction($data);
 
+        if ($transaction == null) {
+            return response()->json(['message' => 'Transaction service is unavailable'], 500);
+        }
+
         return response()->json($transaction, 201);
     }
 }

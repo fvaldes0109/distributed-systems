@@ -12,10 +12,29 @@ class TransactionService
         $host = config('services.cloudcomputing.host');
         $port = config('services.cloudcomputing.port');
 
-        $response = Http::post("http://$host:$port/v1/wallet/transaction", $data);
+        $url = "$host:$port/v1/wallet/transaction";
 
-        if ($response->status() !== 200) {
-            return response()->json(['message' => 'Failed to create transaction'], 500);
+        $response = null;
+        $attempt = 0;
+        $await = 100;
+
+        // Retrying 5 times with exponential backoff
+        while ($attempt++ < 5) {
+            try {
+                $response = Http::timeout(5)->post($url, $data);
+                break;
+            } catch (\Exception $e) {
+
+            }
+
+            // Adding exponential backoff with random jitter
+            $random = mt_rand(0, $await);
+            usleep($random * 1000);
+            $await *= 2;
+        }
+
+        if ($response == null || !$response->successful()) {
+            return null;
         }
 
         $transactionId = $response->json()['data']['transactionId'];
