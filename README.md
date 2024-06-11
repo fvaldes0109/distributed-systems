@@ -57,3 +57,15 @@ The main file for the load balancer is `./loadbalancer/index.js`.
 ## Health checks
 
 The load balancer periodically checks the health of the Laravel containers by sending a `GET` request to the `/hello` endpoint on each service. If the container responds with a `200` status code, it is considered healthy. Otherwise, it is marked as unhealthy and the load balancer stops sending requests to it until it's detected as live again.
+
+## Circuit Breaker
+
+The load balancer also implements a circuit breaker mechanism. In the application cache a boolean is stored indicating if the `cloudcomputing` service is live. If the service is down, no requests will be sended to it until it's detected as live again.
+
+In order to update the status of the service, a scheduled task is run every minute that checks the health of the service by sending a request to it. If the service is down, the circuit breaker is activated until the scheduled task detects the service as live again.
+
+By default the circuit breaker is ignored. In order to enable it you need to start the scheduled task by running the following command:
+
+```bash
+./vendor/bin/sail artisan schedule:work
+```
