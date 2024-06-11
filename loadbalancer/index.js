@@ -5,25 +5,20 @@ const axios = require('axios');
 const app = express();
 
 const urls = process.env.BACKEND_SERVICES_URLS.split(',');
-const hosts = process.env.BACKEND_SERVICES_NAMES.split(',');
+const hosts = process.env.BACKEND_SERVICES_HOSTS.split(',');
 
-app.get('/hello', (req, res) => {
-    res.send('Hello from the load balancer!');
-});
+let availableServices = [];
 
-app.get('/available-services', async (req, res) => {
-    res.json(await getAvailableServices());
-});
+setInterval(async () => {
+    availableServices = await refreshAvailableServices();
+}, 2000);
 
 app.get('*', async (req, res) => {
-
-    const availableServices = await getAvailableServices();
     const randomUrl = availableServices[Math.floor(Math.random() * availableServices.length)];
     res.redirect(randomUrl + req.url);
 });
 
 app.post('*', async (req, res) => {
-    const availableServices = await getAvailableServices();
     const randomUrl = availableServices[Math.floor(Math.random() * availableServices.length)];
     res.redirect(307, randomUrl + req.url);
 });
@@ -32,7 +27,7 @@ app.listen(process.env.LOAD_BALANCER_PORT, () => {
     console.log('Load balancer is running on port ' + process.env.LOAD_BALANCER_PORT);
 });
 
-const getAvailableServices = async () => {
+const refreshAvailableServices = async () => {
     const servicesResponses = await Promise.all(hosts.map(async (host, index) => {
         try {
             const response = await axios.get(`http://${host}/api/hello`, { timeout: 5000 });

@@ -7,7 +7,7 @@ services:
             - '${LOAD_BALANCER_PORT:-9000}:${LOAD_BALANCER_PORT:-9000}'
         environment:
             BACKEND_SERVICES_URLS: ${BACKEND_SERVICES_URLS}
-            BACKEND_SERVICES_NAMES: ${BACKEND_SERVICES_NAMES}
+            BACKEND_SERVICES_HOSTS: ${BACKEND_SERVICES_HOSTS}
             LOAD_BALANCER_PORT: ${LOAD_BALANCER_PORT}
         networks:
             - sail
