@@ -17,7 +17,7 @@
 - Run the migrations to set up the database:
 
 ```bash
-./vendor/bin/sail artisan migrate
+./vendor/bin/sail artisan migrate && ./vendor/bin/sail artisan migrate --database=mysql2
 ```
 
 ## How to use
@@ -69,3 +69,13 @@ By default the circuit breaker is ignored. In order to enable it you need to sta
 ```bash
 ./vendor/bin/sail artisan schedule:work
 ```
+
+## Database shards
+
+The application uses two different databases to store the transactions. The first database is the default one and the second one is a shard. When a transaction is going to be stored, its id is hashed and the result is used to determine in which database the transaction is going to be stored.  
+More databases instances can be added. The necessary changes must be:
+
+- Add the new database in the `docker-compose.yml` file
+- Add the new database in the `.env` file
+- Add the new database in the `config/database.php` file
+- Run the migrations for the new database

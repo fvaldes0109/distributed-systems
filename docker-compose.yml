@@ -110,6 +110,30 @@ services:
                 - '-p${DB_PASSWORD}'
             retries: 3
             timeout: 5s
+    mysql2:
+        image: 'mysql/mysql-server:8.0'
+        ports:
+            - '${FORWARD_DB_PORT_2:-3307}:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD_2}'
+            MYSQL_ROOT_HOST: '%'
+            MYSQL_DATABASE: '${DB_DATABASE_2}'
+            MYSQL_USER: '${DB_USERNAME_2}'
+            MYSQL_PASSWORD: '${DB_PASSWORD_2}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        volumes:
+            - 'sail-mysql2:/var/lib/mysql'
+            - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+        networks:
+            - sail
+        healthcheck:
+            test:
+                - CMD
+                - mysqladmin
+                - ping
+                - '-p${DB_PASSWORD_2}'
+            retries: 3
+            timeout: 5s
     cloudcomputing:
         image: 'igorsakhankov/harbour-cloudcomputing'
         ports:
@@ -121,4 +145,6 @@ networks:
         driver: bridge
 volumes:
     sail-mysql:
+        driver: local
+    sail-mysql2:
         driver: local

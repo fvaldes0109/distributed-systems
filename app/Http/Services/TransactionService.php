@@ -40,7 +40,13 @@ class TransactionService
         $transactionId = $response->json()['data']['transactionId'];
         $status = $response->json()['data']['status'];
 
-        return Transaction::create([
+        $serviceId = crc32($transactionId) % env('SHARDS_AMOUNT') + 1;
+        $connectionName = 'mysql' . ($serviceId == 1 ? '' : $serviceId);
+
+        $transaction = new Transaction();
+        $transaction->setConnection($connectionName);
+
+        $newTransaction = $transaction->create([
             'transactionId' => $transactionId,
             'status' => $status,
             'amount' => $data['amount'],
@@ -48,5 +54,7 @@ class TransactionService
             'description' => $data['description'],
             'userId' => $data['userId']
         ]);
+
+        return $newTransaction;
     }
 }
