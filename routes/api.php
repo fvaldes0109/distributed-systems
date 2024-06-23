@@ -12,4 +12,5 @@ Route::get('/cc-status', function () {
     return response()->json(['status' => 'Cloud computing service is ' . (Cache::get('cloudcomputing-live') ? 'up' : 'down')]);
 });
 
+Route::get('/transaction', [TransactionController::class, 'index']);
 Route::post('/transaction', [TransactionController::class, 'collectCash']);

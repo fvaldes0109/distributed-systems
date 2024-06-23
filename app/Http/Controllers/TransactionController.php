@@ -3,12 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Services\TransactionService;
+use App\Jobs\ProcessTransactionJob;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class TransactionController extends Controller
 {
+    public function index()
+    {
+        return Transaction::all();
+    }
+
     public function collectCash(Request $request)
     {
         if (Cache::has('cloudcomputing-live') && Cache::get('cloudcomputing-live') == false) {
@@ -22,12 +28,8 @@ class TransactionController extends Controller
             'userId' => 'required|string'
         ]);
 
-        $transaction = TransactionService::createTransaction($data);
+        ProcessTransactionJob::dispatch($data);
 
-        if ($transaction == null) {
-            return response()->json(['message' => 'Transaction service is taking too long to respond'], 500);
-        }
-
-        return response()->json($transaction, 201);
+        return response()->json(['message' => 'Transaction enqueued successfully'], 200);
     }
 }

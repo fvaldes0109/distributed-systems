@@ -69,3 +69,17 @@ By default the circuit breaker is ignored. In order to enable it you need to sta
 ```bash
 ./vendor/bin/sail artisan schedule:work
 ```
+
+## Queue
+
+The application uses a queue to process the transactions. The queue is database driven and is processed by a worker. The worker is started by running the following command:
+
+```bash
+./vendor/bin/sail artisan queue:work
+```
+
+The worker will process the transactions and send them to the `cloudcomputing` service.
+
+This was achieved by using the Laravel Job system
+
+Since now we cannot get a response because the transaction flow became asynchronous, we will recieve a `200` status code if the transaction was successfully enqueued, and in order to check the status of the transaction we can send a `GET` request to the `api/transaction` endpoint.
